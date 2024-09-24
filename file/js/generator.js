@@ -13,28 +13,28 @@ types.forEach(type => {
     })
 })
 
-async function newurl(imb) {
-    try {
-        const response = await fetch('https://tv-vivo.github.io/live/api/premium.js');
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        const movie = data.find(movie => movie.imb === imb);
-        return movie ? movie.url : 'Película no encontrada';
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return 'Error al obtener la película';
-    }
+let vpnmax = ''; // Variable para almacenar la URL de la película
+
+function newurl(imb) {
+    return fetch('https://tv-vivo.github.io/live/api/premium.js')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const movie = data.find(movie => movie.imb === imb);
+            return movie ? movie.url : 'Película no encontrada';
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            return 'Error al obtener la película';
+        });
 }
 
-async function vpnmovie(imb) {
-    // Reemplaza este valor con el ID que desees buscar
-    const movie = await newurl(imb);
-    return movie; // Devuelve la URL de la película correspondiente
-}
-
-// Llamada a vpnmovie
+// Define un solo serieKey
+ // Reemplaza con el ID deseado
 
 
 
@@ -247,12 +247,12 @@ ${seasonsOption}
                     }
                 });
 
-
+                newurl(serieKey).then(url => {
+                    vpnmax = url; // Almacena la URL en la variable vpnmax
+                });
+                
                     let template = document.getElementById('html-final');
-                    (async () => { // Reemplaza con el ID deseado
-                        const vpnmax = await vpnmovie(serieKey); // Usa await aquí
-                        ; // Imprime la URL de la película
-                    
+
                     let justHtml = `[stt/Pelicula]
 [hd/HD]
 [sc/${datos.vote_average.toFixed(1)}]
@@ -283,8 +283,7 @@ ${datos.overview}
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
-`;    
-})();              
+`;                  
                     template.innerText = justHtml;
                     let templateHTML = template.innerText;
                     
