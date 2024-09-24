@@ -10,267 +10,134 @@ types.forEach(type => {
         } else if (type.value == "serie"){
             document.getElementById('season-selector').style.display = "block";
         }
-    })
-})
+    });
+});
 
+function convertMinutes(minutes) {
+    let hours = Math.floor(minutes / 60),
+        mins = Math.floor(minutes % 60),
+        total = '';
 
-function convertMinutes(minutess){
-    let hours = Math.floor(minutess / 60) ,
-    minutes = Math.floor(minutess % 60),
-    total = '';
-
-    if (minutess < 60){
-        total = `${minutes}m`
-        return total
-    } else if (minutess > 60){
-      total = `${hours}h ${minutes}m`
-      return total
-    } else if (minutess = 60){
-        total = `${hours}h`
-        return total
+    if (minutes < 60) {
+        total = `${mins}m`;
+    } else if (minutes >= 60) {
+        total = `${hours}h ${mins}m`;
     }
+    return total;
 }
-
 
 function generar() {
     let serieKey = document.getElementById('numero').value;
-    let languaje = "es-MX"
+    let languaje = "es-MX";
     let seasonNumber = document.getElementById('numeroTemporada').value;
 
-    const cargarPeliculas = async() => {
-
+    const cargarPeliculas = async () => {
         if (isSerie.checked) {
             try {
-
                 const respuesta = await fetch(`https://api.themoviedb.org/3/tv/${serieKey}?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7&language=${languaje}`);
-                const respuesta3 = await fetch(`https://api.themoviedb.org/3/tv/${serieKey}/season/${seasonNumber}?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7&language=${languaje}`);
-    
-                if (respuesta.status === 200) {
+                const temporadas = await fetch(`https://api.themoviedb.org/3/tv/${serieKey}/season/${seasonNumber}?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7&language=${languaje}`);
+
+                if (respuesta.status === 200 && temporadas.status === 200) {
                     const datos = await respuesta.json();
-                    const datosTemporada = await respuesta3.json();
-                        
-                    let tags = '';
-    
-                    datos.genres.forEach(genre => {
-                        if (genre.name != datos.genres[datos.genres.length - 1].name) {
-                            tags += `${genre.name}, `
-                        } else {
-                            tags += datos.genres[datos.genres.length - 1].name
-                        }
-                    });
+                    const temporadaData = await temporadas.json();
 
-                    let creators = '';
-    
-                    datos.created_by.forEach((creator, i) => {
-                        if (i == datos.created_by.length - 1){
-                            creators += creator.name
-                        } else{
-                            creators += `${creator.name}, `
+                    let tags = datos.genres.map(genre => genre.name).join(', ');
 
-                        }
-                    });
-    
-                       
-                    let episodeList = '';
-    
-                    datosTemporada.episodes.forEach(episode => {
-                        let runtime ;
-                        if (episode.runtime != null) {
-                            runtime = convertMinutes(episode.runtime);
-                        } else {
-                            runtime = ''
-                        }
-                        episodeList += `
-                        [Episodio ${episode.episode_number}|https://www.youtube.com/embed/zh4KhVSMwtQ]
-                        `
-                    })
-    
-                    let seasonsOption = '';
-    
-                    datos.seasons.forEach(season => {
-                        
-                        if(season.name != "Especiales"){
-                            seasonsOption += `<option value="${season.season_number}">Temporada ${season.season_number}</option>
-                            `
-                        }
-                    })
-    
-                    let genSeasonsCount;
-    
-                    if (datos.number_of_seasons == 1){
-                        genSeasonsCount = " Temporada"
-                    } else if (datos.number_of_seasons > 1){
-                        genSeasonsCount = " Temporadas"
-                    }
-                    
+                    let episodes = temporadaData.episodes.map(episode => `[ss] [Episodio ${episode.episode_number} (${episode.name})](${convertMinutes(episode.runtime)} | ${episode.vote_average.toFixed(1)}⭐) [/ss]`).join("\n");
+
                     let template = document.getElementById('html-final');
-    
                     let justHtml = `
 [stt/Serie]
 [hd/HD]
-[sc/${datos.vote_average.toFixed(1)}]
+[sc/${temporadaData.vote_average.toFixed(1)}]
 
 <!-- 
-TITULO DE LA ENTRADA:     ${datos.name} - ${datos.first_air_date.slice(0,4)}
+TITULO DE LA ENTRADA:    ${datos.name} - Temporada ${temporadaData.season_number} (${datos.first_air_date.slice(0, 4)})
 GENEROS/ETIQUETAS:    ${tags}, Series
-IMAGEN DE FONDO:    https://image.tmdb.org/t/p/original${datos.backdrop_path}
+IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 -->
 
-<span class='temp+'><!--more-->${datos.number_of_seasons + genSeasonsCount}</span>
-
-<img alt="nomedofilme" src="https://image.tmdb.org/t/p/w300${datos.poster_path}" style="display: none;" />
+<span><!--more--></span>
+<img src="https://image.tmdb.org/t/p/w300/${temporadaData.poster_path}" style="display: none;" />
 <p>
 
-[ss]
-[Trailer;https://www.youtube.com/embed/l6kp780S-os*]
-[/ss]
+${episodes}
 
 [nd]
 ${datos.overview}
 [/nd]
 
-
-<!--Lista de Episodios-->
-<div class="season-list add-on hidden">
-<div class="select-season">
-<h2>Episodios</h2>
-<select name="" id="select-season">
-${seasonsOption}
-
-</select>
-</div>
-
-<div id="temps">
-<ul class="caps-grid animation" id="season-${seasonNumber}">
-
 <id>
-[br/Episodios temporada ${seasonNumber}]
 
-  ${episodeList}
-</ul>
+[br/REPRODUCTOR]
 
-
-<!--INGRESAR MAS TEMPORADAS AQUI -->
-
-</div>
-</div>
-<!--Todos los derechos reservados @ANDRES VPN-->
+[Opcion 1|]
   
-                    `;
-                    
-                    let seasonOnly = `
-                    <ul class="caps-grid hide" id="season-${seasonNumber}">
-                    [br/Episodios temporada ${seasonNumber}]
-                    ${episodeList}
-                    </ul>
+<!--Todos los derechos reservados @ANDRES-VPN-->
 
-                     `;
-    
-                    const btnCopiar = document.getElementById('copiar');
-    
-                    if (seasonNumber == 1) {
-                        template.innerText = justHtml;
-                    } else if (seasonNumber > 1){
-                        template.innerText = seasonOnly;
-                    }
-    
+`;
+
+                    template.innerText = justHtml;
                     let templateHTML = template.innerText;
-                    console.log(justHtml, typeof justHtml)
+
+                    const btnCopiar = document.getElementById('copiar');
                     btnCopiar.addEventListener('click', () => {
                         navigator.clipboard.writeText(templateHTML);
-                    })
+                    });
 
-                    
+                    // Actualización de la UI con la info obtenida
                     let genPoster = document.getElementById('info-poster');
                     let genTitle = document.getElementById('info-title');
                     let genSeasons = document.getElementById('info-seasons');
                     let genYear = document.getElementById('info-year');
-    
-                    genPoster.setAttribute('src', `https://image.tmdb.org/t/p/w300/${datos.poster_path}`)
-                    genTitle.innerText = datos.name;
-                    genSeasons.innerText = datos.number_of_seasons + genSeasonsCount;
-                    genYear.innerText = datos.first_air_date.slice(0,4);
-    
-    
-    
-                } else if (respuesta.status === 401) {
-                    console.log('Wrong key');
+
+                    genPoster.setAttribute('src', `https://image.tmdb.org/t/p/w300/${temporadaData.poster_path}`);
+                    genTitle.innerText = `${datos.name} - T${temporadaData.season_number}`;
+                    genSeasons.innerText = `T${temporadaData.season_number}`;
+                    genYear.innerText = datos.first_air_date.slice(0, 4);
                 } else if (respuesta.status === 404) {
-                    console.log('No existe');
+                    console.log('Serie no encontrada');
                 }
-    
+
             } catch (error) {
                 console.log(error);
             }
-        } else
-        if(isMovie.checked){
+
+        } else if (isMovie.checked) {
             try {
+                const respuesta = await fetch(`https://api.themoviedb.org/3/movie/${serieKey}?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7&language=${languaje}`);
 
-            const respuesta = await fetch(`https://api.themoviedb.org/3/movie/${serieKey}?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7&language=${languaje}`);
+                if (respuesta.status === 200) {
+                    const datos = await respuesta.json();
 
-            if (respuesta.status === 200) {
-                const datos = await respuesta.json();
-                console.log(datos);
+                    let tags = datos.genres.map(genre => genre.name).join(', ');
 
+                    // Aquí integramos la función para obtener la URL desde tu archivo premium.js
+                    const getMovieLink = async (imb) => {
+                        const url = 'https://tv-vivo.github.io/live/api/premium.js';
+                        const response = await fetch(url);
+                        const data = await response.text();
+                        // Ejecutar el JS y obtener la lista de películas
+                        eval(data); // Esto asigna el contenido del archivo premium.js
+                        const movie = premium.find(m => m.imb === imb);
+                        return movie ? movie.url : "Película no encontrada";
+                    };
 
-                let tags = '';
-
-                datos.genres.forEach(genre => {
-                    if (genre.name != datos.genres[datos.genres.length - 1].name) {
-                        tags += `${genre.name}, `
-                    } else {
-                        tags += datos.genres[datos.genres.length - 1].name
-                    }
-                });
-
-
-                    let template = document.getElementById('html-final');
-// Función para obtener los datos de películas desde la URL con fetch
-async function fetchMovies() {
-    const url = 'https://tv-vivo.github.io/live/api/premium.js';
-    try {
-        const response = await fetch(url);
-        const movies = await response.json();
-        return movies;
-    } catch (error) {
-        console.error('Error al obtener los datos de las películas:', error);
-        return [];
-    }
-}
-
-// Función para obtener el link de una película por su imb
-async function getMovieLink(imb) {
-    const movies = await fetchMovies(); // Esperamos a que se obtengan los datos
-    const movie = movies.find(movie => movie.imb === imb);
-    if (movie) {
-        return movie.url;
-    } else {
-        return "Película no encontrada";
-    }
-}
-
-// Ejemplo de uso con .then() sin usar async/await ni una función principal
-
-let vpnmovie;
-
-getMovieLink(serieKey).then(url => {
-    vpnmovie = url;
-
-
-// NOTA: Aquí fuera, vpnmovie todavía será undefined hasta que la promesa se resuelva
-
-                    let justHtml = `[stt/Pelicula]
+                    getMovieLink(serieKey).then(url => {
+                        let template = document.getElementById('html-final');
+                        let justHtml = `
+[stt/Pelicula]
 [hd/HD]
 [sc/${datos.vote_average.toFixed(1)}]
 
 <!-- 
-TITULO DE LA ENTRADA:    ${datos.title} - ${datos.release_date.slice(0,4)}
+TITULO DE LA ENTRADA:    ${datos.title} - ${datos.release_date.slice(0, 4)}
 GENEROS/ETIQUETAS:    ${tags}, Peliculas
 IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 -->
 
 <span><!--more--></span>
-<img  src="https://image.tmdb.org/t/p/w300/${datos.poster_path}" style="display: none;" />
+<img src="https://image.tmdb.org/t/p/w300/${datos.poster_path}" style="display: none;" />
 <p>
 
 [ss]
@@ -286,49 +153,44 @@ ${datos.overview}
 [br/REPRODUCTOR]
 
 [Opcion 1|${url}]
+  
+<!--Todos los derechos reservados @ANDRES-VPN-->
 
-  <!--Todos los derechos reservados @ANDRES-VPN-->
+`;
 
-`;     });             
-                    template.innerText = justHtml;
-                    let templateHTML = template.innerText;
-                    
-                    const btnCopiar = document.getElementById('copiar');
-                    
-                    btnCopiar.addEventListener('click', () => {
-                        navigator.clipboard.writeText(templateHTML);
-                    })
-    
-    
-                    let genPoster = document.getElementById('info-poster');
-                    let genTitle = document.getElementById('info-title');
-                    let genSeasons = document.getElementById('info-seasons');
-                    let genYear = document.getElementById('info-year');
-    
-                    genPoster.setAttribute('src', `https://image.tmdb.org/t/p/w300/${datos.poster_path}`)
-                    genTitle.innerText = datos.title;
-                    genSeasons.innerText = "";
-                    genYear.innerText = datos.release_date.slice(0,4);
-    
-    
-    
+                        template.innerText = justHtml;
+                        let templateHTML = template.innerText;
+
+                        const btnCopiar = document.getElementById('copiar');
+                        btnCopiar.addEventListener('click', () => {
+                            navigator.clipboard.writeText(templateHTML);
+                        });
+
+                        // Actualización de la UI con la info obtenida
+                        let genPoster = document.getElementById('info-poster');
+                        let genTitle = document.getElementById('info-title');
+                        let genSeasons = document.getElementById('info-seasons');
+                        let genYear = document.getElementById('info-year');
+
+                        genPoster.setAttribute('src', `https://image.tmdb.org/t/p/w300/${datos.poster_path}`);
+                        genTitle.innerText = datos.title;
+                        genSeasons.innerText = "";
+                        genYear.innerText = datos.release_date.slice(0, 4);
+                    });
+
                 } else if (respuesta.status === 401) {
                     console.log('Wrong key');
                 } else if (respuesta.status === 404) {
                     console.log('No existe');
                 }
-    
+
             } catch (error) {
                 console.log(error);
-            }           
+            }
         }
-
-    }
+    };
 
     cargarPeliculas();
 }
 
 generar();
-
-
-
