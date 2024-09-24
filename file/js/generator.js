@@ -15,21 +15,12 @@ types.forEach(type => {
 
 async function newurl(imb) {
     try {
-        // Realiza la solicitud fetch a la API
         const response = await fetch('https://tv-vivo.github.io/live/api/premium.js');
-        
-        // Verifica si la respuesta es correcta
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        
-        // Convierte la respuesta a JSON
         const data = await response.json();
-        
-        // Busca la película con el ID imb
         const movie = data.find(movie => movie.imb === imb);
-        
-        // Devuelve la URL correspondiente o un mensaje si no se encuentra
         return movie ? movie.url : 'Película no encontrada';
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -37,11 +28,14 @@ async function newurl(imb) {
     }
 }
 
-// Función principal para utilizar newurl
+async function vpnmovie(imb) {
+    // Reemplaza este valor con el ID que desees buscar
+    const movie = await newurl(imb);
+    return movie; // Devuelve la URL de la película correspondiente
+}
 
+// Llamada a vpnmovie
 
-// Llama a la función principal
-main();
 
 
 function convertMinutes(minutess){
@@ -255,13 +249,10 @@ ${seasonsOption}
 
 
                     let template = document.getElementById('html-final');
-                    async function vpnmovie() {
-                        // Reemplaza este valor con el ID que desees buscar
-                           const movie = await newurl(serieKey);
-                           return movie
-                        // Imprime la URL de la película correspondiente
-                       }
-                       const vpnmax = vpnmovie()
+                    (async () => { // Reemplaza con el ID deseado
+                        const vpnmax = await vpnmovie(serieKey); // Usa await aquí
+                        ; // Imprime la URL de la película
+                    
                     let justHtml = `[stt/Pelicula]
 [hd/HD]
 [sc/${datos.vote_average.toFixed(1)}]
@@ -292,7 +283,8 @@ ${datos.overview}
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
-`;                  
+`;    
+})();              
                     template.innerText = justHtml;
                     let templateHTML = template.innerText;
                     
