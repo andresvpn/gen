@@ -268,7 +268,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;https://www.youtube.com/embed/l6kp780S-os*]
+[Trailer;*]
 [/ss]
 
 [nd]
