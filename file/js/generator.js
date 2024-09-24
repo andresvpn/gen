@@ -223,6 +223,32 @@ ${seasonsOption}
                     }
                 });
 
+// Función para obtener los datos de películas desde la URL con fetch
+async function fetchMovies() {
+    const url = 'https://tv-vivo.github.io/live/api/premium.js';
+    try {
+        const response = await fetch(url);
+        const movies = await response.json();
+        return movies;
+    } catch (error) {
+        console.error('Error al obtener los datos de las películas:', error);
+        return [];
+    }
+}
+
+// Función para obtener el link de una película por su imb
+async function getMovieLink(imb) {
+    const movies = await fetchMovies(); // Esperamos a que se obtengan los datos
+    const movie = movies.find(movie => movie.imb === imb);
+    if (movie) {
+        return movie.url;
+    } else {
+        return "Película no encontrada";
+    }
+}
+
+// Ejemplo de uso
+const vpnmovie = getMovieLink(serieKey)
 
                     let template = document.getElementById('html-final');
 
@@ -241,7 +267,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;https://www.youtube.com/embed/l6kp780S-os*]
+[Trailer;*]
 [/ss]
 
 [nd]
@@ -252,11 +278,7 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|https://www.youtube.com/embed/a8Gx8wiNbs8]
-
-[Opcion 2|https://www.youtube.com/embed/DwuJeGYlYyw]
-
-[Opcion 3|https://www.youtube.com/embed/zh4KhVSMwtQ] 
+[Opcion 1|${vpnmovie}]
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
