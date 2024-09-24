@@ -223,6 +223,8 @@ ${seasonsOption}
                     }
                 });
 
+
+                    let template = document.getElementById('html-final');
 // Función para obtener los datos de películas desde la URL con fetch
 async function fetchMovies() {
     const url = 'https://tv-vivo.github.io/live/api/premium.js';
@@ -247,10 +249,15 @@ async function getMovieLink(imb) {
     }
 }
 
-// Ejemplo de uso
-const vpnmovie = getMovieLink(serieKey)
+// Ejemplo de uso con .then() sin usar async/await ni una función principal
 
-                    let template = document.getElementById('html-final');
+let vpnmovie;
+
+getMovieLink(serieKey).then(url => {
+    vpnmovie = url;
+
+
+// NOTA: Aquí fuera, vpnmovie todavía será undefined hasta que la promesa se resuelva
 
                     let justHtml = `[stt/Pelicula]
 [hd/HD]
@@ -267,7 +274,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;*]
+[Trailer;https://www.youtube.com/embed/l6kp780S-os*]
 [/ss]
 
 [nd]
@@ -278,11 +285,11 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|${vpnmovie}]
+[Opcion 1|${url}]
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
-`;                  
+`;     });             
                     template.innerText = justHtml;
                     let templateHTML = template.innerText;
                     
