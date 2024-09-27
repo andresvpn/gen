@@ -252,7 +252,7 @@ ${seasonsOption}
                 });
                 
                     let template = document.getElementById('html-final');
-
+const vmaxx = movies.find(m => m.imb.toString() === serieKey.toString());
                     let justHtml = `[stt/Pelicula]
 [hd/HD]
 [sc/${datos.vote_average.toFixed(1)}]
@@ -279,7 +279,7 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|${vpnmax}]
+[Opcion 1|${vpnmaxx.url}]
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
