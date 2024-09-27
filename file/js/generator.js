@@ -13,29 +13,6 @@ types.forEach(type => {
     })
 })
 
-let vpnmax = ''; // Variable para almacenar la URL de la película
-
-function newurl(imb) {
-    return fetch('https://tv-vivo.github.io/live/api/premium.js')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const movie = data.find(movie => movie.imb === imb);
-            return movie ? movie.url : 'Película no encontrada';
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-            return 'Error al obtener la película';
-        });
-}
-
-// Define un solo serieKey
- // Reemplaza con el ID deseado
-
 
 
 function convertMinutes(minutess){
@@ -247,9 +224,7 @@ ${seasonsOption}
                     }
                 });
 
-                newurl(serieKey).then(url => {
-                    vpnmax = url; // Almacena la URL en la variable vpnmax
-                });
+                
                 
                     let template = document.getElementById('html-final');
 
@@ -279,7 +254,7 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|${vpnmax}]
+[Opcion 1|   ]
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
