@@ -1,3 +1,20 @@
+let isSerie = document.getElementById('serie');
+let isMovie = document.getElementById('movie');
+
+let types = document.querySelectorAll('input[type=radio][name=type]');
+
+types.forEach(type => {
+    type.addEventListener('change', () =>{
+        if (type.value == "movie") {
+            document.getElementById('season-selector').style.display = "none";
+        } else if (type.value == "serie"){
+            document.getElementById('season-selector').style.display = "block";
+        }
+    })
+})
+
+let vpnmax = ''; // Variable para almacenar la URL de la película
+
 function newurl(imb) {
     return fetch('https://tv-vivo.github.io/live/api/premium.js')
         .then(response => {
@@ -15,20 +32,10 @@ function newurl(imb) {
             return 'Error al obtener la película';
         });
 }
-let isSerie = document.getElementById('serie');
-let isMovie = document.getElementById('movie');
 
-let types = document.querySelectorAll('input[type=radio][name=type]');
+// Define un solo serieKey
+ // Reemplaza con el ID deseado
 
-types.forEach(type => {
-    type.addEventListener('change', () =>{
-        if (type.value == "movie") {
-            document.getElementById('season-selector').style.display = "none";
-        } else if (type.value == "serie"){
-            document.getElementById('season-selector').style.display = "block";
-        }
-    })
-})
 
 
 function convertMinutes(minutess){
@@ -240,35 +247,12 @@ ${seasonsOption}
                     }
                 });
 
-// Función para obtener los datos de películas desde la URL con fetch
-async function fetchMovies() {
-    const url = 'https://tv-vivo.github.io/live/api/premium.js';
-    try {
-        const response = await fetch(url);
-        const movies = await response.json();
-        return movies;
-    } catch (error) {
-        console.error('Error al obtener los datos de las películas:', error);
-        return [];
-    }
-}
-
-// Función para obtener el link de una película por su imb
-async function getMovieLink(imb) {
-    const movies = await fetchMovies(); // Esperamos a que se obtengan los datos
-    const movie = movies.find(movie => movie.imb === imb);
-    if (movie) {
-        return movie.url;
-    } else {
-        return "Película no encontrada";
-    }
-}
-
-// Ejemplo de uso
-const vpnmovie = getMovieLink(serieKey)
-
+                newurl(serieKey).then(url => {
+                    vpnmax = url; // Almacena la URL en la variable vpnmax
+                });
+                
                     let template = document.getElementById('html-final');
-vpn = await newurl(serieKey)
+
                     let justHtml = `[stt/Pelicula]
 [hd/HD]
 [sc/${datos.vote_average.toFixed(1)}]
@@ -295,7 +279,7 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|${vpn}]
+[Opcion 1|${vpnmax}]
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
