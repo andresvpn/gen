@@ -241,7 +241,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;https://www.youtube.com/embed/l6kp780S-os*]
+[Trailer;*]
 [/ss]
 
 [nd]
@@ -252,11 +252,7 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|https://www.youtube.com/embed/a8Gx8wiNbs8]
-
-[Opcion 2|https://www.youtube.com/embed/DwuJeGYlYyw]
-
-[Opcion 3|https://www.youtube.com/embed/zh4KhVSMwtQ] 
+[Opcion 1|]
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
