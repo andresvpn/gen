@@ -14,7 +14,6 @@ types.forEach(type => {
 })
 
 
-
 function convertMinutes(minutess){
     let hours = Math.floor(minutess / 60) ,
     minutes = Math.floor(minutess % 60),
@@ -224,8 +223,7 @@ ${seasonsOption}
                     }
                 });
 
-                
-                
+
                     let template = document.getElementById('html-final');
 
                     let justHtml = `[stt/Pelicula]
@@ -243,7 +241,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;*]
+[Trailer;https://www.youtube.com/embed/l6kp780S-os*]
 [/ss]
 
 [nd]
@@ -254,7 +252,11 @@ ${datos.overview}
 
 [br/REPRODUCTOR]
 
-[Opcion 1|   ]
+[Opcion 1|https://www.youtube.com/embed/a8Gx8wiNbs8]
+
+[Opcion 2|https://www.youtube.com/embed/DwuJeGYlYyw]
+
+[Opcion 3|https://www.youtube.com/embed/zh4KhVSMwtQ] 
 
   <!--Todos los derechos reservados @ANDRES-VPN-->
 
@@ -298,5 +300,6 @@ ${datos.overview}
 }
 
 generar();
+
 
 
