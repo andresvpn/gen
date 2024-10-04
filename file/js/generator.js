@@ -212,7 +212,7 @@ ${seasonsOption}
             if (respuesta.status === 200) {
                 const datos = await respuesta.json();
                 const datos2 = await respuesta2.json();
-                const trailer = datos.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+                const trailer = datos2.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
                 const trailerUrl = `https://www.youtube.com/embed/${trailer.key}`
 
                 let tags = '';
