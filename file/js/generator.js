@@ -243,7 +243,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;${ trailerUrl}*]
+[Trailer;${trailerUrl}*]
 [/ss]
 
 [nd]
