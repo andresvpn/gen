@@ -207,13 +207,11 @@ ${seasonsOption}
             try {
 
             const respuesta = await fetch(`https://api.themoviedb.org/3/movie/${serieKey}?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7&language=${languaje}`);
-            const respuesta2 = await fetch(`https://api.themoviedb.org/3/movie/${serieKey}/videos?api_key=c71d55c790adcb0fa9ea6ebcbc9a61a7`);
 
             if (respuesta.status === 200) {
                 const datos = await respuesta.json();
-                const datos2 = await respuesta2.json();
-                const trailer = datos2.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
-                const trailerUrl = `https://www.youtube.com/embed/${trailer.key}`
+                console.log(datos);
+
 
                 let tags = '';
 
@@ -243,7 +241,7 @@ IMAGEN DE FONDO:     https://image.tmdb.org/t/p/original${datos.backdrop_path}
 <p>
 
 [ss]
-[Trailer;${trailerUrl}*]
+[Trailer;*]
 [/ss]
 
 [nd]
